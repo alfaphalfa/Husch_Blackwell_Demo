@@ -1,14 +1,15 @@
-import OpenAI from 'openai'
-import Anthropic from '@anthropic-ai/sdk'
+// Demo mode - No AI clients needed
+// import OpenAI from 'openai'
+// import Anthropic from '@anthropic-ai/sdk'
 
-// Initialize AI clients
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+// Initialize AI clients (disabled for demo)
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY!,
+// })
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-})
+// const anthropic = new Anthropic({
+//   apiKey: process.env.ANTHROPIC_API_KEY!,
+// })
 
 export interface DocumentAnalysis {
   extraction: ExtractionResult
@@ -86,6 +87,7 @@ export interface ActionItem {
 
 /**
  * Main orchestration function that coordinates multi-model processing
+ * Always uses demo mode for reliable deployment
  */
 export async function processDocument(
   file: File | Buffer,
@@ -94,54 +96,9 @@ export async function processDocument(
   const startTime = Date.now()
 
   try {
-    // Check if AI services are available
-    const hasOpenAI = !!process.env.OPENAI_API_KEY
-    const hasAnthropic = !!process.env.ANTHROPIC_API_KEY
-
-    if (!hasOpenAI && !hasAnthropic) {
-      console.log('🎭 No AI services available, using mock data...')
-      return await processDocumentMock(file, documentType)
-    }
-
-    // Step 1: Extract content using GPT-4 Vision (with fallback)
-    console.log('🔍 Starting document extraction...')
-    const extraction = hasOpenAI
-      ? await extractWithVision(file, documentType)
-      : await extractMock(file, documentType)
-
-    // Step 2: Analyze with Claude (with fallback)
-    console.log('🧠 Analyzing document...')
-    const analysis = hasAnthropic
-      ? await analyzeWithClaude(extraction)
-      : await analyzeMock(extraction)
-
-    // Step 3: Risk Assessment (with fallback)
-    console.log('⚠️ Performing risk assessment...')
-    const risks = hasAnthropic
-      ? await assessRisks(extraction, analysis)
-      : await assessRisksMock(extraction, analysis)
-
-    // Step 4: Generate Action Items (with fallback)
-    console.log('📋 Generating action items...')
-    const actionItems = hasAnthropic
-      ? await generateActionItems(extraction, analysis, risks)
-      : await generateActionItemsMock(extraction, analysis, risks)
-
-    // Calculate metrics
-    const processingTime = (Date.now() - startTime) / 1000
-    const timeSaved = calculateTimeSaved(documentType, extraction.rawText.length)
-    const costSaved = calculateCostSaved(timeSaved)
-
-    console.log(`✅ Document processed in ${processingTime}s, saved ${timeSaved} hours`)
-
-    return {
-      extraction,
-      analysis,
-      risks,
-      actionItems,
-      timeSaved,
-      costSaved
-    }
+    // Always use demo mode for now
+    console.log('🎭 Using demo mode for reliable deployment...')
+    return await processDocumentMock(file, documentType)
   } catch (error) {
     console.error('Error in document processing:', error)
     // Fallback to mock data on any error
@@ -151,179 +108,51 @@ export async function processDocument(
 }
 
 /**
- * Extract information using GPT-4 Vision
+ * Extract information using GPT-4 Vision (DISABLED FOR DEMO)
  */
 async function extractWithVision(
   file: File | Buffer,
   documentType?: string
 ): Promise<ExtractionResult> {
-  // Convert file to base64
-  const base64 = await fileToBase64(file)
-  
-  const prompt = `
-    You are a legal document expert. Analyze this ${documentType || 'legal document'} and extract:
-    
-    1. Document type and purpose
-    2. Key terms and definitions (with importance levels)
-    3. All dates and deadlines (mark critical ones)
-    4. All parties involved and their roles
-    5. Obligations and responsibilities for each party
-    6. Any penalties, liabilities, or risk factors
-    
-    Provide the extraction in a structured format with high accuracy.
-    Include the confidence level (0-100) for your extraction.
-  `
-  
-  const response = await openai.chat.completions.create({
-    model: "gpt-4-vision-preview",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          { 
-            type: "image_url", 
-            image_url: { 
-              url: `data:image/jpeg;base64,${base64}`,
-              detail: "high"
-            } 
-          }
-        ]
-      }
-    ],
-    max_tokens: 4096,
-    temperature: 0.1, // Low temperature for accuracy
-  })
-  
-  const content = response.choices[0].message.content || ''
-  return parseExtractionResult(content)
+  // Demo mode - return mock data instead of calling OpenAI
+  console.log('🎭 GPT-4 Vision extraction disabled for demo mode')
+  return await extractMock(file, documentType)
 }
 
 /**
- * Analyze extracted content using Claude
+ * Analyze extracted content using Claude (DISABLED FOR DEMO)
  */
 async function analyzeWithClaude(
   extraction: ExtractionResult
 ): Promise<AnalysisResult> {
-  const prompt = `
-    As a senior legal analyst, analyze this extracted legal document information:
-    
-    Document Type: ${extraction.documentType}
-    
-    Key Terms: ${JSON.stringify(extraction.keyTerms)}
-    
-    Dates: ${JSON.stringify(extraction.dates)}
-    
-    Parties: ${JSON.stringify(extraction.parties)}
-    
-    Obligations: ${JSON.stringify(extraction.obligations)}
-    
-    Provide:
-    1. Executive summary (2-3 sentences)
-    2. Key findings (top 5 most important points)
-    3. Recommendations for the legal team
-    4. Complexity assessment (low/medium/high)
-    5. Estimated review time for an attorney (in hours)
-    
-    Focus on actionable insights and potential issues that require attention.
-  `
-  
-  const response = await anthropic.messages.create({
-    model: "claude-3-opus-20240229",
-    messages: [
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    max_tokens: 2048,
-    temperature: 0.3,
-  })
-  
-  const content = response.content[0].type === 'text' ? response.content[0].text : ''
-  return parseAnalysisResult(content)
+  // Demo mode - return mock data instead of calling Claude
+  console.log('🎭 Claude analysis disabled for demo mode')
+  return await analyzeMock(extraction)
 }
 
 /**
- * Assess risks based on extraction and analysis
+ * Assess risks based on extraction and analysis (DISABLED FOR DEMO)
  */
 async function assessRisks(
   extraction: ExtractionResult,
   analysis: AnalysisResult
 ): Promise<RiskAssessment[]> {
-  const prompt = `
-    Based on this legal document analysis, identify and assess risks:
-    
-    ${JSON.stringify({ extraction: extraction.obligations, analysis: analysis.keyFindings })}
-    
-    For each risk, provide:
-    1. Category (contractual, financial, compliance, operational, reputational)
-    2. Severity (high/medium/low)
-    3. Clear description
-    4. Mitigation strategy
-    5. Probability percentage (0-100)
-    
-    Focus on material risks that could impact the organization.
-  `
-  
-  const response = await anthropic.messages.create({
-    model: "claude-3-sonnet-20240229",
-    messages: [
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    max_tokens: 1500,
-    temperature: 0.2,
-  })
-  
-  const content = response.content[0].type === 'text' ? response.content[0].text : ''
-  return parseRiskAssessment(content)
+  // Demo mode - return mock data instead of calling Claude
+  console.log('🎭 Risk assessment disabled for demo mode')
+  return await assessRisksMock(extraction, analysis)
 }
 
 /**
- * Generate actionable items for the legal team
+ * Generate actionable items for the legal team (DISABLED FOR DEMO)
  */
 async function generateActionItems(
   extraction: ExtractionResult,
   analysis: AnalysisResult,
   risks: RiskAssessment[]
 ): Promise<ActionItem[]> {
-  const criticalDates = extraction.dates.filter(d => d.isCritical)
-  const highRisks = risks.filter(r => r.severity === 'high')
-  
-  const prompt = `
-    Generate specific action items for the legal team based on:
-    
-    Critical Dates: ${JSON.stringify(criticalDates)}
-    High Risks: ${JSON.stringify(highRisks)}
-    Recommendations: ${JSON.stringify(analysis.recommendations)}
-    
-    For each action item, include:
-    1. Clear title
-    2. Detailed description
-    3. Priority (urgent/high/medium/low)
-    4. Estimated time to complete (in hours)
-    5. Suggested due date if applicable
-    
-    Make actions specific, measurable, and immediately actionable.
-  `
-  
-  const response = await anthropic.messages.create({
-    model: "claude-3-sonnet-20240229",
-    messages: [
-      {
-        role: "user",
-        content: prompt
-      }
-    ],
-    max_tokens: 1500,
-    temperature: 0.3,
-  })
-  
-  const content = response.content[0].type === 'text' ? response.content[0].text : ''
-  return parseActionItems(content)
+  // Demo mode - return mock data instead of calling Claude
+  console.log('🎭 Action item generation disabled for demo mode')
+  return await generateActionItemsMock(extraction, analysis, risks)
 }
 
 /**
