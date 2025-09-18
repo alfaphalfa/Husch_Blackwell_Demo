@@ -1,0 +1,40 @@
+PROFESSIONAL SERVICES AGREEMENT
+
+This Professional Services Agreement ("Agreement") is entered into on March 15, 2024, between HB Legal Intelligence Platform LLC ("Service Provider") and Acme Corporation ("Client").
+
+1. SERVICES
+Service Provider shall provide AI-powered document analysis and legal intelligence services, including but not limited to:
+- Contract review and analysis
+- Risk assessment and mitigation
+- Compliance monitoring
+- Document extraction and summarization
+
+2. TERM
+This Agreement shall commence on April 1, 2024, and continue until March 31, 2025, unless terminated earlier in accordance with the terms herein.
+
+3. COMPENSATION
+Client agrees to pay Service Provider $15,000 per month, payable within thirty (30) days of receipt of invoice.
+
+4. TERMINATION
+Either party may terminate this Agreement with ninety (90) days written notice.
+
+5. LIABILITY
+Service Provider's liability shall be limited to the amount paid by Client in the twelve (12) months preceding the claim, not to exceed $180,000.
+
+6. CONFIDENTIALITY
+Both parties acknowledge that they may receive confidential information and agree to maintain such information in confidence for a period of five (5) years following termination.
+
+7. INTELLECTUAL PROPERTY
+All work product created by Service Provider shall remain the property of Service Provider, with Client receiving a non-exclusive license to use.
+
+8. GOVERNING LAW
+This Agreement shall be governed by the laws of Missouri.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+SERVICE PROVIDER:                    CLIENT:
+HB Legal Intelligence Platform LLC    Acme Corporation
+
+By: Kevin J. Andrews                  By: ________________
+Title: Founder & CEO                  Title: ______________
+Date: March 15, 2024                 Date: ______________

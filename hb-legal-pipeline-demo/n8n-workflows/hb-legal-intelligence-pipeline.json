@@ -1,0 +1,299 @@
+{
+  "name": "HB Legal Intelligence Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "legal-document",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook_intake",
+      "name": "Document Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "legal-doc-intake"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3001/api/prompts",
+        "method": "GET",
+        "options": {},
+        "queryParametersUi": {
+          "parameter": []
+        }
+      },
+      "id": "http_get_prompts",
+      "name": "Get Best Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "text",
+        "operation": "complete",
+        "model": "gpt-4",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "={{$node['Get Best Prompt'].json[0].template}}"
+            },
+            {
+              "role": "user",
+              "content": "Document to analyze:\n{{$node['Document Intake'].json.document}}\n\nCase ID: {{$node['Document Intake'].json.case_id}}\nDocument Type: {{$node['Document Intake'].json.type}}"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 2000
+        }
+      },
+      "id": "openai_analysis",
+      "name": "GPT-4 Analysis",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3001/api/workflow-metrics",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"workflow_id\": \"{{$workflow.id}}\",\n  \"workflow_name\": \"HB Legal Intelligence Pipeline\",\n  \"execution_time\": {{$node['Document Intake'].json.timestamp ? (Date.now() - $node['Document Intake'].json.timestamp) / 1000 : 0}},\n  \"success\": true,\n  \"prompt_id\": {{$node['Get Best Prompt'].json[0].id}},\n  \"model_used\": \"gpt-4\",\n  \"tokens_used\": {{$node['GPT-4 Analysis'].json.usage ? $node['GPT-4 Analysis'].json.usage.total_tokens : 0}},\n  \"cost\": {{$node['GPT-4 Analysis'].json.usage ? $node['GPT-4 Analysis'].json.usage.total_tokens * 0.00003 : 0}}\n}",
+        "options": {}
+      },
+      "id": "http_track_metrics",
+      "name": "Track Metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract key information from the analysis\nconst analysis = $node['GPT-4 Analysis'].json.choices[0].message.content;\nconst caseId = $node['Document Intake'].json.case_id;\nconst docType = $node['Document Intake'].json.type;\n\n// Calculate estimated time and cost savings\nconst avgManualTime = 120; // minutes\nconst avgLawyerRate = 450; // $/hour\nconst aiProcessingTime = 2; // minutes\n\nconst timeSaved = avgManualTime - aiProcessingTime;\nconst costSaved = (timeSaved / 60) * avgLawyerRate;\n\n// Format the output\nreturn {\n  case_id: caseId,\n  document_type: docType,\n  analysis: analysis,\n  metrics: {\n    time_saved_minutes: timeSaved,\n    cost_saved_dollars: costSaved.toFixed(2),\n    processing_time_seconds: (Date.now() - $node['Document Intake'].json.timestamp) / 1000\n  },\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "function_process",
+      "name": "Process Results",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$node['Document Intake'].json.type}}",
+              "operation": "equals",
+              "value2": "deposition"
+            }
+          ]
+        }
+      },
+      "id": "if_deposition",
+      "name": "Is Deposition?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3001/api/prompts/1",
+        "method": "GET",
+        "options": {}
+      },
+      "id": "http_deposition_prompt",
+      "name": "Get Deposition Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3001/api/prompts/4",
+        "method": "GET",
+        "options": {}
+      },
+      "id": "http_contract_prompt",
+      "name": "Get Contract Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 600]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll"
+      },
+      "id": "merge_prompts",
+      "name": "Merge Prompts",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [850, 550]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "notification",
+              "value": "=Document analyzed successfully!\n\nCase: {{$node['Process Results'].json.case_id}}\nType: {{$node['Process Results'].json.document_type}}\nTime Saved: {{$node['Process Results'].json.metrics.time_saved_minutes}} minutes\nCost Saved: ${{$node['Process Results'].json.metrics.cost_saved_dollars}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set_notification",
+      "name": "Format Notification",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "content": "## HB Legal Intelligence Pipeline\n\nThis workflow demonstrates:\n1. Document intake via webhook\n2. Dynamic prompt selection based on document type\n3. AI analysis using GPT-4\n4. Metrics tracking and ROI calculation\n5. Result formatting and notification",
+        "height": 200,
+        "width": 400
+      },
+      "id": "sticky_note",
+      "name": "Workflow Description",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [100, 100]
+    }
+  ],
+  "connections": {
+    "Document Intake": {
+      "main": [
+        [
+          {
+            "node": "Get Best Prompt",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Deposition?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Best Prompt": {
+      "main": [
+        [
+          {
+            "node": "GPT-4 Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4 Analysis": {
+      "main": [
+        [
+          {
+            "node": "Track Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Track Metrics": {
+      "main": [
+        [
+          {
+            "node": "Process Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Results": {
+      "main": [
+        [
+          {
+            "node": "Format Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Deposition?": {
+      "main": [
+        [
+          {
+            "node": "Get Deposition Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Contract Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Deposition Prompt": {
+      "main": [
+        [
+          {
+            "node": "Merge Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contract Prompt": {
+      "main": [
+        [
+          {
+            "node": "Merge Prompts",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "",
+    "timezone": "America/New_York"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "legal",
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-01-15T00:00:00.000Z"
+    },
+    {
+      "name": "ai",
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-01-15T00:00:00.000Z"
+    },
+    {
+      "name": "demo",
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-01-15T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-15T00:00:00.000Z",
+  "versionId": "1"
+}

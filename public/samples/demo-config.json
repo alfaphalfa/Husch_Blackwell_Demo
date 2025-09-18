@@ -1,0 +1,104 @@
+{
+  "sampleDocuments": [
+    {
+      "id": "sample-contract",
+      "title": "Professional Services Agreement",
+      "filename": "sample-contract.txt",
+      "type": "Contract",
+      "description": "A comprehensive professional services agreement showcasing AI contract analysis capabilities",
+      "estimatedProcessingTime": "45 seconds",
+      "keyInsights": [
+        "Monthly compensation: $15,000",
+        "Term: 12 months (Apr 2024 - Mar 2025)",
+        "Liability cap: $180,000",
+        "90-day termination notice required",
+        "IP ownership retained by service provider"
+      ],
+      "riskFactors": [
+        "High liability exposure for client",
+        "Broad IP retention clause",
+        "Extended termination notice period"
+      ]
+    },
+    {
+      "id": "sample-deposition",
+      "title": "Construction Litigation Deposition",
+      "filename": "sample-deposition.txt",
+      "type": "Deposition",
+      "description": "Project manager deposition transcript from construction dispute case",
+      "estimatedProcessingTime": "2 minutes",
+      "keyInsights": [
+        "Project value: $485,000 → $523,000 (7.8% overrun)",
+        "Delay: 5 months beyond original timeline",
+        "Key issues: Soil conditions, permits, weather",
+        "Communication breakdown identified",
+        "Change orders approved: $28,000"
+      ],
+      "riskFactors": [
+        "Inadequate soil survey",
+        "Communication gaps with client",
+        "Cost overrun without full approval"
+      ]
+    },
+    {
+      "id": "sample-merger",
+      "title": "Corporate Merger Agreement",
+      "filename": "sample-merger-agreement.txt",
+      "type": "M&A Agreement",
+      "description": "Complex merger agreement demonstrating advanced AI analysis for corporate transactions",
+      "estimatedProcessingTime": "90 seconds",
+      "keyInsights": [
+        "Transaction value: $285 million ($47.50/share)",
+        "Premium: 28% above market price",
+        "Expected synergies: $12.5M annually",
+        "Termination fee: $8.5 million",
+        "Employee retention: 24 months"
+      ],
+      "riskFactors": [
+        "High termination fee (3% of deal value)",
+        "Broad material adverse change clause",
+        "Limited survival period for reps/warranties"
+      ]
+    }
+  ],
+  "demoMetrics": {
+    "processingSpeed": {
+      "averagePerPage": "3.2 seconds",
+      "peakThroughput": "847 pages/hour",
+      "accuracyRate": "94.7%"
+    },
+    "hbSpecificResults": {
+      "kiraReplacement": {
+        "contractsProcessed": 937,
+        "timeFrame": "4 hours",
+        "costSavings": "$47,500",
+        "efficiencyGain": "12x faster"
+      },
+      "copilotIntegration": {
+        "hoursSaved2024": 8800,
+        "costAvoidance": "$1.2M",
+        "userAdoption": "89%",
+        "satisfactionScore": "4.6/5"
+      },
+      "conflictChecks": {
+        "annualHoursSaved": 800,
+        "errorReduction": "73%",
+        "processSpeedup": "15x faster",
+        "costSavings": "$120,000/year"
+      }
+    }
+  },
+  "presentationMode": {
+    "enableTooltips": true,
+    "highlightFeatures": true,
+    "showMetrics": true,
+    "guidedFlow": [
+      "landing-overview",
+      "upload-demo",
+      "processing-visualization",
+      "results-analysis",
+      "dashboard-metrics",
+      "roi-calculator"
+    ]
+  }
+}

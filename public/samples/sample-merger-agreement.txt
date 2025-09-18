@@ -1,0 +1,114 @@
+MERGER AGREEMENT
+
+AGREEMENT AND PLAN OF MERGER
+
+This Agreement and Plan of Merger ("Agreement") is entered into as of October 15, 2024, by and among TechCorp Industries, Inc., a Delaware corporation ("Parent"), Acquisition Sub LLC, a Delaware limited liability company and wholly owned subsidiary of Parent ("Merger Sub"), and InnovateTech Solutions, Inc., a Missouri corporation ("Company").
+
+RECITALS
+
+WHEREAS, the respective Boards of Directors of Parent, Merger Sub, and Company have approved this Agreement and the transactions contemplated hereby;
+
+WHEREAS, Parent desires to acquire Company through a merger of Merger Sub with and into Company;
+
+WHEREAS, the merger will result in significant operational synergies and cost savings estimated at $12.5 million annually;
+
+NOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, the parties agree as follows:
+
+1. THE MERGER
+
+1.1 Merger. Subject to the terms and conditions of this Agreement, at the Effective Time, Merger Sub shall be merged with and into Company, and Company shall be the surviving corporation.
+
+1.2 Effects of Merger. The merger shall have the effects set forth in Section 351 of the Delaware General Corporation Law and Section 351.455 of the Missouri Business Corporation Act.
+
+1.3 Certificate of Incorporation and Bylaws. The Certificate of Incorporation and Bylaws of Company shall be amended and restated in their entirety as set forth in Exhibit A.
+
+2. CONSIDERATION
+
+2.1 Merger Consideration. Each share of Company Common Stock issued and outstanding immediately prior to the Effective Time shall be converted into the right to receive $47.50 in cash ("Per Share Price").
+
+2.2 Total Consideration. The aggregate merger consideration is approximately $285 million based on 6 million outstanding shares.
+
+2.3 Payment. Payment shall be made through Parent's designated paying agent within five (5) business days of the closing date.
+
+3. REPRESENTATIONS AND WARRANTIES OF COMPANY
+
+3.1 Corporate Authorization. Company has full corporate power and authority to execute and deliver this Agreement.
+
+3.2 Financial Statements. The audited financial statements of Company as of December 31, 2023, fairly present the financial condition of Company.
+
+3.3 Material Contracts. Schedule 3.3 contains a complete list of all material contracts to which Company is a party.
+
+3.4 Litigation. There is no pending or threatened litigation against Company that would have a material adverse effect.
+
+3.5 Intellectual Property. Company owns or has valid licenses to all intellectual property necessary for its business operations.
+
+3.6 Employee Benefits. All employee benefit plans are listed in Schedule 3.6 and are in compliance with applicable law.
+
+4. CONDITIONS TO CLOSING
+
+4.1 Regulatory Approvals. All required regulatory approvals, including HSR clearance, shall have been obtained.
+
+4.2 Shareholder Approval. Company shareholders shall have approved this Agreement by the required vote.
+
+4.3 No Material Adverse Change. Company shall not have experienced any material adverse change since the date of this Agreement.
+
+4.4 Legal Opinions. Each party shall have received satisfactory legal opinions from their respective counsel.
+
+5. TERMINATION
+
+5.1 Mutual Consent. This Agreement may be terminated at any time by mutual written consent of the parties.
+
+5.2 Breach. Either party may terminate if the other party materially breaches this Agreement and fails to cure within thirty (30) days.
+
+5.3 Regulatory Denial. Either party may terminate if required regulatory approvals are denied.
+
+5.4 Termination Fee. If Company terminates to accept a superior proposal, Company shall pay Parent a termination fee of $8.5 million.
+
+6. INDEMNIFICATION
+
+6.1 Survival. The representations and warranties shall survive closing for eighteen (18) months.
+
+6.2 Indemnification Cap. Total indemnification liability shall not exceed $28.5 million (10% of transaction value).
+
+6.3 Escrow. $14.25 million shall be held in escrow for indemnification claims.
+
+7. EMPLOYEE MATTERS
+
+7.1 Employment Continuation. Parent shall offer employment to all Company employees for at least twelve (12) months post-closing.
+
+7.2 Benefits Continuation. Employee benefits shall be maintained at substantially similar levels for twenty-four (24) months.
+
+7.3 Severance. Enhanced severance packages are provided for key executives as detailed in Schedule 7.3.
+
+8. MISCELLANEOUS
+
+8.1 Governing Law. This Agreement shall be governed by Delaware law.
+
+8.2 Jurisdiction. Exclusive jurisdiction in Delaware Court of Chancery.
+
+8.3 Expenses. Each party shall bear its own transaction expenses, estimated at $2.3 million for Company.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+TECHCORP INDUSTRIES, INC.               INNOVATETECH SOLUTIONS, INC.
+
+By: Michael R. Thompson                  By: Jennifer L. Walsh
+Title: Chief Executive Officer           Title: Chief Executive Officer
+Date: October 15, 2024                  Date: October 15, 2024
+
+ACQUISITION SUB LLC
+
+By: Michael R. Thompson
+Title: Managing Member
+Date: October 15, 2024
+
+---
+
+TRANSACTION SUMMARY:
+- Deal Value: $285 million ($47.50 per share)
+- Premium to Market: 28%
+- Expected Annual Synergies: $12.5 million
+- Expected Closing: Q1 2025
+- Key Regulatory Approval: HSR (under Hart-Scott-Rodino Act)
+- Employee Retention: 24-month commitment
+- Management Retention: Key executives locked for 36 months
