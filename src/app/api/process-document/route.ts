@@ -27,8 +27,7 @@ const getMockAnalysis = (documentType?: string, fileName?: string) => {
           { party: 'Both Parties', description: 'Maintain strict confidentiality', status: 'active' },
           { party: 'Receiving Party', description: 'Return or destroy confidential information upon termination', status: 'active' }
         ],
-        rawText: 'Mock extracted content from NDA document',
-        confidence: 97
+        rawText: 'Mock extracted content from NDA document'
       },
       analysis: {
         summary: 'Mutual NDA between TechCo Inc. and DataFlow Systems LLC with standard confidentiality provisions and Delaware jurisdiction.',
@@ -77,8 +76,7 @@ const getMockAnalysis = (documentType?: string, fileName?: string) => {
           { name: 'Acme Corporation', role: 'Defendant', obligations: ['Respond to discovery requests'] }
         ],
         obligations: [],
-        rawText: 'Mock extracted content from deposition transcript',
-        confidence: 94
+        rawText: 'Mock extracted content from deposition transcript'
       },
       analysis: {
         summary: 'Expert witness deposition in Williams v. Acme product liability case with strong technical testimony identifying multiple design flaws.',
@@ -131,8 +129,7 @@ const getMockAnalysis = (documentType?: string, fileName?: string) => {
           { party: 'Provider', description: 'Maintain 99.9% uptime', deadline: 'Monthly', status: 'active' },
           { party: 'Client', description: 'Pay monthly fees within 30 days', deadline: 'Monthly', status: 'active' }
         ],
-        rawText: 'Mock extracted content from MSA document',
-        confidence: 96
+        rawText: 'Mock extracted content from MSA document'
       },
       analysis: {
         summary: 'High-value enterprise services agreement with aggressive SLA requirements and significant financial commitments.',
@@ -185,8 +182,7 @@ const getMockAnalysis = (documentType?: string, fileName?: string) => {
           { party: 'Apex Corporation', description: 'Produce all responsive documents', deadline: 'March 31, 2025', status: 'pending' },
           { party: 'Apex Corporation', description: 'Provide document-by-document privilege log', deadline: 'March 31, 2025', status: 'pending' }
         ],
-        rawText: 'Mock extracted content from discovery requests',
-        confidence: 93
+        rawText: 'Mock extracted content from discovery requests'
       },
       analysis: {
         summary: 'Comprehensive discovery requests in merger litigation with extraordinarily broad scope targeting 2.4 million documents over 5-year period.',
