@@ -1,5 +1,0 @@
-n8n-data/
-postgres-data/
-node_modules/
-*.db
-.env
