@@ -36,4 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # Temporary files
-nul
+
+# Demo directory (removed for security)
+hb-legal-pipeline-demo/
