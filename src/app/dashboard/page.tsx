@@ -331,7 +331,7 @@ export default function DashboardPage() {
   // Document processing functions
   const startProcessing = async () => {
     if (!selectedDocument) {
-      alert('Please select a document first')
+      console.error('Please select a document first')
       return
     }
 
