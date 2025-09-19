@@ -4,7 +4,7 @@ export interface ProcessChainStep {
   name: string;
   status: 'pending' | 'active' | 'complete' | 'error';
   duration?: number;
-  icon?: any;
+  icon?: React.ReactNode;
 }
 
 export interface HBMetrics {

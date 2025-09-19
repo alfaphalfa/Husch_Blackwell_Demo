@@ -1,5 +1,64 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, RealtimeChannel } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
+
+// Type definitions
+interface DocumentData {
+  id?: string
+  user_id?: string
+  organization_id?: string
+  file_name: string
+  file_type?: string
+  file_size?: number
+  status?: string
+  processed_at?: string
+  created_at?: string
+  analyses?: unknown[]
+}
+
+interface AnalysisData {
+  id?: string
+  document_id: string
+  analysis_type?: string
+  results?: Record<string, unknown>
+  created_at?: string
+}
+
+interface ActionItemData {
+  id?: string
+  document_id?: string
+  assigned_to?: string
+  title: string
+  description?: string
+  due_date?: string
+  status?: string
+  completed_at?: string
+}
+
+interface NotificationData {
+  id?: string
+  user_id: string
+  title: string
+  message?: string
+  type?: string
+  read?: boolean
+  created_at?: string
+}
+
+interface MetricData {
+  id?: string
+  organization_id?: string
+  metric_type?: string
+  value?: number
+  created_at?: string
+}
+
+interface AuditLogData {
+  user_id: string
+  action: string
+  details?: Record<string, unknown>
+  ip_address?: string
+  user_agent?: string
+}
 
 // Environment variables with fallbacks for development
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
@@ -7,7 +66,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholde
 
 // Create Supabase client (will be inactive if env vars not set)
 export const supabase = supabaseUrl === 'https://placeholder.supabase.co' ?
-  null as any :
+  null as unknown as ReturnType<typeof createClient<Database>> :
   createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: true,
@@ -24,7 +83,7 @@ export const supabase = supabaseUrl === 'https://placeholder.supabase.co' ?
 // Auth helpers
 export const auth = {
   // Sign up new user
-  async signUp(email: string, password: string, metadata?: Record<string, any>) {
+  async signUp(email: string, password: string, metadata?: Record<string, unknown>) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -83,10 +142,10 @@ export const auth = {
 export const db = {
   // Documents
   documents: {
-    async create(document: any) {
+    async create(document: DocumentData) {
       const { data, error } = await supabase
         .from('documents')
-        .insert(document)
+        .insert(document as never)
         .select()
         .single()
       return { data, error }
@@ -123,7 +182,7 @@ export const db = {
       if (!supabase) return { data: null, error: new Error('Supabase not configured') }
       const { data, error } = await supabase
         .from('documents')
-        .update({ status, processed_at: new Date().toISOString() } as any)
+        .update({ status, processed_at: new Date().toISOString() } as never)
         .eq('id', id)
         .select()
         .single()
@@ -141,10 +200,10 @@ export const db = {
 
   // Analyses
   analyses: {
-    async create(analysis: any) {
+    async create(analysis: AnalysisData) {
       const { data, error } = await supabase
         .from('analyses')
-        .insert(analysis)
+        .insert(analysis as never)
         .select()
         .single()
       return { data, error }
@@ -162,10 +221,10 @@ export const db = {
 
   // Action Items
   actionItems: {
-    async create(actionItem: any) {
+    async create(actionItem: ActionItemData) {
       const { data, error } = await supabase
         .from('action_items')
-        .insert(actionItem)
+        .insert(actionItem as never)
         .select()
         .single()
       return { data, error }
@@ -181,13 +240,13 @@ export const db = {
     },
 
     async updateStatus(id: string, status: string) {
-      const updates: any = { status }
+      const updates: Partial<ActionItemData> = { status }
       if (status === 'completed') {
         updates.completed_at = new Date().toISOString()
       }
       const { data, error } = await supabase
         .from('action_items')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single()
@@ -197,10 +256,10 @@ export const db = {
 
   // Metrics
   metrics: {
-    async create(metric: any) {
+    async create(metric: MetricData) {
       const { data, error } = await supabase
         .from('processing_metrics')
-        .insert(metric)
+        .insert(metric as never)
         .select()
         .single()
       return { data, error }
@@ -211,7 +270,7 @@ export const db = {
         .rpc('get_organization_metrics', {
           p_org_id: orgId,
           p_days: days
-        })
+        } as never)
       return { data, error }
     },
 
@@ -234,10 +293,10 @@ export const db = {
 
   // Notifications
   notifications: {
-    async create(notification: any) {
+    async create(notification: NotificationData) {
       const { data, error } = await supabase
         .from('notifications')
-        .insert(notification)
+        .insert(notification as never)
         .select()
         .single()
       return { data, error }
@@ -263,7 +322,7 @@ export const db = {
     async markAsRead(id: string) {
       const { data, error } = await supabase
         .from('notifications')
-        .update({ read: true })
+        .update({ read: true } as never)
         .eq('id', id)
         .select()
         .single()
@@ -273,7 +332,7 @@ export const db = {
     async markAllAsRead(userId: string) {
       const { error } = await supabase
         .from('notifications')
-        .update({ read: true })
+        .update({ read: true } as never)
         .eq('user_id', userId)
         .eq('read', false)
       return { error }
@@ -282,7 +341,7 @@ export const db = {
 
   // Audit Logs
   audit: {
-    async log(action: string, details: any) {
+    async log(action: string, details: Record<string, unknown>) {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (!user) return { error: new Error('No authenticated user') }
@@ -295,7 +354,7 @@ export const db = {
           details,
           ip_address: window.location.hostname,
           user_agent: navigator.userAgent
-        })
+        } as never)
         .select()
         .single()
       
@@ -360,7 +419,7 @@ export const storage = {
 // Real-time subscriptions
 export const realtime = {
   // Subscribe to document updates
-  subscribeToDocuments(userId: string, callback: (payload: any) => void) {
+  subscribeToDocuments(userId: string, callback: (payload: unknown) => void) {
     return supabase
       .channel('documents')
       .on(
@@ -377,7 +436,7 @@ export const realtime = {
   },
 
   // Subscribe to notifications
-  subscribeToNotifications(userId: string, callback: (payload: any) => void) {
+  subscribeToNotifications(userId: string, callback: (payload: unknown) => void) {
     return supabase
       .channel('notifications')
       .on(
@@ -394,7 +453,7 @@ export const realtime = {
   },
 
   // Unsubscribe from channel
-  unsubscribe(channel: any) {
+  unsubscribe(channel: RealtimeChannel) {
     return supabase.removeChannel(channel)
   }
 }

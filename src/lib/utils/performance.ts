@@ -3,8 +3,8 @@
  */
 
 // Request caching with TTL
-interface CacheItem {
-  data: any
+interface CacheItem<T = unknown> {
+  data: T
   timestamp: number
   ttl: number
 }
@@ -12,7 +12,7 @@ interface CacheItem {
 class RequestCache {
   private cache = new Map<string, CacheItem>()
 
-  set(key: string, data: any, ttlMs: number = 5 * 60 * 1000) { // 5 minutes default
+  set<T = unknown>(key: string, data: T, ttlMs: number = 5 * 60 * 1000) { // 5 minutes default
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -20,7 +20,7 @@ class RequestCache {
     })
   }
 
-  get(key: string): any | null {
+  get<T = unknown>(key: string): T | null {
     const item = this.cache.get(key)
     if (!item) return null
 
@@ -29,7 +29,7 @@ class RequestCache {
       return null
     }
 
-    return item.data
+    return item.data as T
   }
 
   clear() {
@@ -44,7 +44,7 @@ class RequestCache {
 export const requestCache = new RequestCache()
 
 // Debounced function utility
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): (...args: Parameters<T>) => void {
@@ -56,7 +56,7 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 // Throttled function utility
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -107,11 +107,13 @@ export function getMemoryUsage(): {
   percentage: number
 } | null {
   if (typeof window !== 'undefined' && 'memory' in performance) {
-    const memory = (performance as any).memory
-    return {
-      used: Math.round(memory.usedJSHeapSize / 1048576), // MB
-      total: Math.round(memory.totalJSHeapSize / 1048576), // MB
-      percentage: Math.round((memory.usedJSHeapSize / memory.totalJSHeapSize) * 100)
+    const memory = (performance as ExtendedPerformance).memory
+    if (memory) {
+      return {
+        used: Math.round(memory.usedJSHeapSize / 1048576), // MB
+        total: Math.round(memory.totalJSHeapSize / 1048576), // MB
+        percentage: Math.round((memory.usedJSHeapSize / memory.totalJSHeapSize) * 100)
+      }
     }
   }
   return null
@@ -207,11 +209,11 @@ export const apiOptimization = {
   },
 
   // Request deduplication
-  activeRequests: new Map<string, Promise<any>>(),
+  activeRequests: new Map<string, Promise<unknown>>(),
 
   async dedupedFetch<T>(key: string, fetchFn: () => Promise<T>): Promise<T> {
     if (this.activeRequests.has(key)) {
-      return this.activeRequests.get(key)!
+      return this.activeRequests.get(key)! as Promise<T>
     }
 
     const promise = fetchFn().finally(() => {
@@ -272,6 +274,14 @@ export function preloadCriticalResources() {
       }
       document.head.appendChild(link)
     })
+  }
+}
+
+// Type extensions
+interface ExtendedPerformance extends Performance {
+  memory?: {
+    usedJSHeapSize: number
+    totalJSHeapSize: number
   }
 }
 

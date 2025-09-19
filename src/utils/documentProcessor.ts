@@ -5,13 +5,21 @@ export interface ProcessingStep {
   ai: 'system' | 'gpt4-vision' | 'claude-sonnet' | 'both'
   message: string
   duration: number
-  results?: any
+  results?: Record<string, unknown>
 }
 
 export interface AIAnalysisResult {
   gpt4Vision: {
     extractedElements: string[]
-    documentStructure: any
+    documentStructure: {
+      sections?: number
+      subsections?: number
+      definitions?: number
+      crossReferences?: number
+      articles?: number
+      schedules?: number
+      definedTerms?: number
+    }
     visualFindings: string[]
     confidence: number
     processingTime: number
@@ -704,11 +712,11 @@ function generateFinalAnalysis(
 ): AIAnalysisResult {
   const gptResults = config.steps
     .filter(s => s.ai === 'gpt4-vision')
-    .reduce((acc, step) => ({ ...acc, ...step.results }), {})
+    .reduce((acc, step) => ({ ...acc, ...step.results }), {} as Record<string, unknown>)
 
   const claudeResults = config.steps
     .filter(s => s.ai === 'claude-sonnet')
-    .reduce((acc, step) => ({ ...acc, ...step.results }), {})
+    .reduce((acc, step) => ({ ...acc, ...step.results }), {} as Record<string, unknown>)
 
   const documentType = config.documentType
   const complexity = config.complexity
@@ -716,34 +724,34 @@ function generateFinalAnalysis(
   // Build comprehensive result
   const result: AIAnalysisResult = {
     gpt4Vision: {
-      extractedElements: (gptResults as any).extracted || [],
-      documentStructure: (gptResults as any).documentStructure || {},
+      extractedElements: (gptResults as Record<string, unknown>).extracted as string[] || [],
+      documentStructure: (gptResults as Record<string, unknown>).documentStructure as AIAnalysisResult['gpt4Vision']['documentStructure'] || {},
       visualFindings: [
         `Document type: ${documentType}`,
-        `Total pages: ${(gptResults as any).pages || 'Unknown'}`,
+        `Total pages: ${(gptResults as Record<string, unknown>).pages || 'Unknown'}`,
         `Complexity: ${complexity}`,
-        ...((gptResults as any).keyTestimony || []),
-        ...((gptResults as any).definedTerms || [])
+        ...((gptResults as Record<string, unknown>).keyTestimony as string[] || []),
+        ...((gptResults as Record<string, unknown>).definedTerms as string[] || [])
       ],
-      confidence: (gptResults as any).confidence || 0.95,
+      confidence: (gptResults as Record<string, unknown>).confidence as number || 0.95,
       processingTime: config.steps
         .filter(s => s.ai === 'gpt4-vision')
         .reduce((sum, s) => sum + s.duration, 0)
     },
     claudeSonnet: {
-      legalAnalysis: (claudeResults as any).keyAdmissions || (claudeResults as any).favorableTerms || [],
-      risks: (claudeResults as any).risks || [],
-      keyTerms: (claudeResults as any).keyTerms || [],
-      recommendations: (claudeResults as any).recommendations || [],
-      compliance: (claudeResults as any).compliance || [],
+      legalAnalysis: (claudeResults as Record<string, unknown>).keyAdmissions as string[] || (claudeResults as Record<string, unknown>).favorableTerms as string[] || [],
+      risks: (claudeResults as Record<string, unknown>).risks as RiskItem[] || [],
+      keyTerms: (claudeResults as Record<string, unknown>).keyTerms as string[] || [],
+      recommendations: (claudeResults as Record<string, unknown>).recommendations as string[] || [],
+      compliance: (claudeResults as Record<string, unknown>).compliance as ComplianceItem[] || [],
       processingTime: config.steps
         .filter(s => s.ai === 'claude-sonnet')
         .reduce((sum, s) => sum + s.duration, 0)
     },
     combined: {
-      summary: generateSummary(documentType, claudeResults as any),
-      criticalFindings: extractCriticalFindings(claudeResults as any),
-      actionItems: (claudeResults as any).recommendations || [],
+      summary: generateSummary(documentType, claudeResults),
+      criticalFindings: extractCriticalFindings(claudeResults),
+      actionItems: (claudeResults as Record<string, unknown>).recommendations as string[] || [],
       estimatedSavings: {
         time: calculateTimeSavings(config),
         cost: calculateCostSavings(config)
@@ -755,20 +763,21 @@ function generateFinalAnalysis(
 }
 
 // Helper functions
-function generateSummary(documentType: string, results: any): string {
-  const riskLevel = results.overallRisk ||
-    (results.risks && results.risks.length > 0 ?
-      results.risks[0].level : 'Medium')
+function generateSummary(documentType: string, results: Record<string, unknown>): string {
+  const risks = results.risks as RiskItem[] | undefined
+  const riskLevel = results.overallRisk as string ||
+    (risks && risks.length > 0 ? risks[0].level : 'Medium')
 
   return `Analysis complete for ${documentType}. Risk level: ${riskLevel}. ` +
-    `${results.keyIssues || results.risks?.length || 0} issues identified requiring attention.`
+    `${results.keyIssues || (risks ? risks.length : 0)} issues identified requiring attention.`
 }
 
-function extractCriticalFindings(results: any): string[] {
+function extractCriticalFindings(results: Record<string, unknown>): string[] {
   const findings: string[] = []
+  const risks = results.risks as RiskItem[] | undefined
 
-  if (results.risks) {
-    results.risks
+  if (risks) {
+    risks
       .filter((r: RiskItem) => r.level === 'High')
       .forEach((r: RiskItem) => findings.push(r.description))
   }
@@ -780,14 +789,14 @@ function extractCriticalFindings(results: any): string[] {
   return findings
 }
 
-function calculateTimeSavings(config: any): string {
+function calculateTimeSavings(config: typeof documentProcessingConfigs[keyof typeof documentProcessingConfigs]): string {
   const aiTime = config.expectedDuration / 1000 / 60 // Convert to minutes
   const manualTime = parseInt(config.steps[config.steps.length - 1].results?.manualReviewTime || '4') * 60
   const savings = ((manualTime - aiTime) / manualTime * 100).toFixed(0)
   return `${savings}% faster than manual review`
 }
 
-function calculateCostSavings(config: any): number {
+function calculateCostSavings(config: typeof documentProcessingConfigs[keyof typeof documentProcessingConfigs]): number {
   const hourlyRate = 175 // Attorney hourly rate
   const manualHours = parseInt(config.steps[config.steps.length - 1].results?.manualReviewTime || '4')
   const aiMinutes = config.expectedDuration / 1000 / 60

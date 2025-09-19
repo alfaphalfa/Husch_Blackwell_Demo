@@ -8,7 +8,7 @@ export interface AnalyticsEvent {
   event: string
   page?: string
   action?: string
-  data?: any
+  data?: Record<string, unknown>
   timestamp: number
   sessionId: string
 }
@@ -29,7 +29,7 @@ class Analytics {
   }
 
   // Track user interactions
-  trackEvent(action: string, data?: any) {
+  trackEvent(action: string, data?: Record<string, unknown>) {
     this.track('user_interaction', { action, ...data })
   }
 
@@ -54,7 +54,7 @@ class Analytics {
   }
 
   // Track errors
-  trackError(error: string, page: string, context?: any) {
+  trackError(error: string, page: string, context?: Record<string, unknown>) {
     this.track('error', {
       error,
       page,
@@ -64,7 +64,7 @@ class Analytics {
     })
   }
 
-  private track(event: string, data?: any) {
+  private track(event: string, data?: Record<string, unknown>) {
     const analyticsEvent: AnalyticsEvent = {
       event,
       page: window.location.pathname,
@@ -136,8 +136,8 @@ class Analytics {
       pageViews,
       interactions,
       documentsProcessed: documentProcesses.length,
-      totalTimeSaved: documentProcesses.reduce((sum, e) => sum + (e.data?.timeSaved || 0), 0),
-      totalCostSaved: documentProcesses.reduce((sum, e) => sum + ((e.data?.timeSaved || 0) * 175), 0), // $175/hour
+      totalTimeSaved: documentProcesses.reduce((sum, e) => sum + ((e.data as Record<string, unknown>)?.timeSaved as number || 0), 0),
+      totalCostSaved: documentProcesses.reduce((sum, e) => sum + (((e.data as Record<string, unknown>)?.timeSaved as number || 0) * 175), 0), // $175/hour
       sessionDuration: events.length > 0 ? Date.now() - events[0].timestamp : 0
     }
   }
@@ -165,7 +165,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
 
 // Hook for tracking interactions
 export function useTrackInteraction() {
-  return (action: string, data?: any) => {
+  return (action: string, data?: Record<string, unknown>) => {
     analytics.trackEvent(action, data)
   }
 }

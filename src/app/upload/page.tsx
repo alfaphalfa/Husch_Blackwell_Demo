@@ -351,9 +351,8 @@ export default function UploadPage() {
             'Carve-outs for publicly available information included'
           ],
           documentStructure: {
-            parties: ['TechCo Inc.', 'DataFlow Systems LLC'],
-            effectiveDate: 'January 15, 2025',
-            term: '3 years'
+            sections: 12,
+            definitions: 15
           },
           visualFindings: [
             'Document structure intact',

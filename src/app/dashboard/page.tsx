@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { toast } from '@/components/ui/Toast'
 import {
   BarChart,
   Bar,
@@ -331,7 +332,7 @@ export default function DashboardPage() {
   // Document processing functions
   const startProcessing = async () => {
     if (!selectedDocument) {
-      alert('Please select a document first')
+      toast.info('Please select a document first')
       return
     }
 
